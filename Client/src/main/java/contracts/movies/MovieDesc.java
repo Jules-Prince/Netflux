@@ -22,8 +22,9 @@ public class MovieDesc implements Serializable {
     @Override
     public String toString() {
         return this.getIsbn()
-                + "  -----  "
+                + "   |   "
                 + this.getMovieName()
-                + " " + this.getSynopsis();
+                + "   |   "
+                + this.getSynopsis();
     }
 }
