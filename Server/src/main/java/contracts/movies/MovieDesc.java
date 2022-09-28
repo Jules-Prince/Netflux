@@ -3,9 +3,11 @@ package contracts.movies;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class MovieDesc {
+public class MovieDesc implements Serializable {
 
     private String movieName;
     private String isbn;
