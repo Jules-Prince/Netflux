@@ -1,3 +1,4 @@
+import contracts.IClientBox;
 import contracts.IVODService;
 import contracts.movies.MovieDesc;
 import lombok.Getter;
@@ -40,10 +41,11 @@ public class VODService extends UnicastRemoteObject implements IVODService {
     }
 
     @Override
-    public void playmovie(String isbn) {
+    public void playmovie(String isbn, IClientBox clientBox) throws RemoteException {
         MovieDesc movieRequested = this.searchMovieByIbsn(isbn);
         if(movieRequested != null){
             System.out.println("Le client demande à voir le film" + movieRequested.getMovieName());
+            clientBox.stream(new byte[]{0,1,2});
         }
         else {
             //TODO implements next error
