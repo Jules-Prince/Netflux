@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface IVODService extends Remote {
     List<MovieDesc> viewCatalog() throws RemoteException;
-    void playmovie(String isbn) throws RemoteException;
+    void playmovie(String isbn, IClientBox clientBox) throws RemoteException;
 }
