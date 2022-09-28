@@ -1,0 +1,13 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.netflux.app</groupId>
+    <artifactId>Netflux</artifactId>
+    <packaging>pom</packaging>
+    <version>1</version>
+
+    <modules>
+        <module>Client</module>
+        <module>Server</module>
+    </modules>
+</project>
