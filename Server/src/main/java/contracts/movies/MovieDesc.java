@@ -8,8 +8,8 @@ import lombok.Setter;
 public class MovieDesc {
 
     private String movieName;
-    String isbn;
-    String synopsis;
+    private String isbn;
+    private String synopsis;
 
     public MovieDesc(String movieName, String isbn, String synopsis) {
         this.movieName = movieName;
