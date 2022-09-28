@@ -43,7 +43,7 @@ public class VODService extends UnicastRemoteObject implements IVODService {
     public void playmovie(String isbn) {
         MovieDesc movieRequested = this.searchMovieByIbsn(isbn);
         if(movieRequested != null){
-            System.out.println("Le client demande à voir le film" + movieRequested.getMovieName());
+            System.out.println("Le client demande à voir le film " + movieRequested.getMovieName());
         }
         else {
             //TODO implements next error
