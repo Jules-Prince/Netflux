@@ -20,7 +20,7 @@ public class Client {
             IVODService vodService = (IVODService) reg.lookup("Netflux");
             movieDescList = vodService.viewCatalog();
             this.print(movieDescList);
-            isbn = this.myChoise();
+            isbn = this.myChoice();
             vodService.playmovie(isbn);
         } catch (NotBoundException e) {
             e.printStackTrace();
@@ -36,7 +36,7 @@ public class Client {
         }
     }
 
-    private String myChoise(){
+    private String myChoice(){
         Scanner clavier = new Scanner(System.in);
         System.out.println("Entrer l'ISBN de votre choix :");
         String myISBN = clavier.nextLine();
