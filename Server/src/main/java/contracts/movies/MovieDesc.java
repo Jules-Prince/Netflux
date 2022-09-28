@@ -16,4 +16,12 @@ public class MovieDesc {
         this.isbn = isbn;
         this.synopsis = synopsis;
     }
+
+    @Override
+    public String toString() {
+        return this.getIsbn()
+                + "  -----  "
+                + this.getMovieName()
+                + " " + this.getSynopsis();
+    }
 }
