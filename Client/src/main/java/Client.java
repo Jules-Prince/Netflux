@@ -1,3 +1,4 @@
+import contracts.Bill;
 import contracts.IClientBox;
 import contracts.IVODService;
 import contracts.box.ClientBox;
@@ -15,6 +16,7 @@ public class Client {
     public static final int PORT_CLIENTBOX = 10006;
     private List<MovieDesc> movieDescList;
     private IClientBox clientBox;
+    private Bill bill;
 
     void run() throws RemoteException {
         Registry reg = LocateRegistry.getRegistry(2001);
@@ -22,11 +24,21 @@ public class Client {
         clientBox = new ClientBox(PORT_CLIENTBOX);
 
         try {
+            // Connection to Netflux
             IVODService vodService = (IVODService) reg.lookup("Netflux");
+
+            // View catalog
             movieDescList = vodService.viewCatalog();
-            this.print(movieDescList);
+            this.printMovieList(movieDescList);
+
+            // Client choice for the movie
             isbn = this.myChoice();
-            vodService.playmovie(isbn, clientBox);
+
+            // Play the movie
+            bill = vodService.playmovie(isbn, clientBox);
+
+            // Bill
+            this.printBill(bill);
         } catch (NotBoundException e) {
             e.printStackTrace();
         } catch (NoSuchObjectException e){
@@ -38,10 +50,17 @@ public class Client {
 
     }
 
-    private void print(List<MovieDesc> movieDescList){
+    private void printMovieList(List<MovieDesc> movieDescList){
         for(int i = 0; i < movieDescList.size(); i++){
             System.out.println(movieDescList.get(i));
         }
+    }
+
+    private void printBill(Bill bill){
+        System.out.println("====================");
+        System.out.println("Your bill :");
+        System.out.println("For " + bill.getMovieName());
+        System.out.println("Price : " + bill.getOutrageousPrice() + " $");
     }
 
     private String myChoice(){
