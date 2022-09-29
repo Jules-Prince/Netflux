@@ -47,7 +47,7 @@ public class VODService extends UnicastRemoteObject implements IVODService {
         if(movieRequested != null){
             System.out.println("Le client demande à voir le film" + movieRequested.getMovieName());
             clientBox.stream(new byte[]{0,1,2});
-            bill = new Bill(movieRequested.getMovieName(), new BigInteger("9.99"));
+            bill = new Bill(movieRequested.getMovieName(), new BigInteger("9"));
         }
         else {
             //TODO implements next error
