@@ -43,16 +43,14 @@ public class VODService extends UnicastRemoteObject implements IVODService {
     @Override
     public Bill playmovie(String isbn, IClientBox clientBox) throws RemoteException {
         MovieDesc movieRequested = this.searchMovieByIbsn(isbn);
-        Bill bill = null;
+
         if(movieRequested != null){
             System.out.println("Le client demande à voir le film" + movieRequested.getMovieName());
             clientBox.stream(new byte[]{0,1,2});
-            bill = new Bill(movieRequested.getMovieName(), new BigInteger("9"));
+            return new Bill(movieRequested.getMovieName(), new BigInteger("9"));
         }
-        else {
-            //TODO implements next error
-            System.out.println("LE FILM DU CLIENT N'EST PAS CONNUS DU CATALOGUE !!!");
-        }
-        return bill;
+
+        System.out.println("LE FILM DU CLIENT N'EST PAS CONNUS DU CATALOGUE !!!");
+        throw new RemoteException("Le film demander n'est pas présent dans la liste ...");
     }
 }
