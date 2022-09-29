@@ -9,6 +9,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.sql.Struct;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,38 +17,48 @@ public class Client {
     public static final int PORT_CLIENTBOX = 10006;
     private List<MovieDesc> movieDescList;
     private IClientBox clientBox;
-    private Bill bill;
 
     void run() throws RemoteException {
         Registry reg = LocateRegistry.getRegistry(2001);
-        String isbn;
         clientBox = new ClientBox(PORT_CLIENTBOX);
+        Bill bill = null;
+        String isbn;
+        boolean valid = false;
 
         try {
             // Connection to Netflux
             IVODService vodService = (IVODService) reg.lookup("Netflux");
 
-            // View catalog
+            // Get catalog
             movieDescList = vodService.viewCatalog();
-            this.printMovieList(movieDescList);
 
-            // Client choice for the movie
-            isbn = this.myChoice();
+            while (!valid) {
+                // Print catalog
+                this.printMovieList(movieDescList);
 
-            // Play the movie
-            bill = vodService.playmovie(isbn, clientBox);
+                // Client choice for the movie
+                isbn = this.myChoice();
 
-            // Bill
+                // Play the movie
+                try {
+                    // get bill
+                    bill = vodService.playmovie(isbn, clientBox);
+                    valid = true;
+                } catch (RemoteException e) {
+                    System.out.println(e.detail);
+                    System.out.println("Recommencer ...\n\n");
+                }
+            }
+
+            // Print Bill
             this.printBill(bill);
+
         } catch (NotBoundException e) {
             e.printStackTrace();
         } catch (NoSuchObjectException e){
             System.out.println("Aie aie aie, probleme avec l'objet ...");
             e.printStackTrace();
         }
-
-
-
     }
 
     private void printMovieList(List<MovieDesc> movieDescList){
