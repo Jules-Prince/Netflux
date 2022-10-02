@@ -14,11 +14,14 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Client {
-    public static final int PORT_CLIENTBOX = 10006;
-    private List<MovieDesc> movieDescList;
-    private IClientBox clientBox;
+    public static final int PORT_CLIENTBOX = 10002;
+    private static List<MovieDesc> movieDescList;
+    private static IClientBox clientBox;
 
-    void run() throws RemoteException {
+    public static void main(String[] args) throws RemoteException {
+        if (System.getSecurityManager()==null)
+            System.setSecurityManager(new SecurityManager());
+
         Registry reg = LocateRegistry.getRegistry(2001);
         clientBox = new ClientBox(PORT_CLIENTBOX);
         Bill bill = null;
@@ -34,10 +37,10 @@ public class Client {
 
             while (!valid) {
                 // Print catalog
-                this.printMovieList(movieDescList);
+                printMovieList(movieDescList);
 
                 // Client choice for the movie
-                isbn = this.myChoice();
+                isbn = myChoice();
 
                 // Play the movie
                 try {
@@ -51,7 +54,7 @@ public class Client {
             }
 
             // Print Bill
-            this.printBill(bill);
+            printBill(bill);
 
         } catch (NotBoundException e) {
             e.printStackTrace();
@@ -61,20 +64,20 @@ public class Client {
         }
     }
 
-    private void printMovieList(List<MovieDesc> movieDescList){
+    private static void printMovieList(List<MovieDesc> movieDescList){
         for(int i = 0; i < movieDescList.size(); i++){
             System.out.println(movieDescList.get(i));
         }
     }
 
-    private void printBill(Bill bill){
+    private static void printBill(Bill bill){
         System.out.println("====================");
         System.out.println("Your bill :");
         System.out.println("For " + bill.getMovieName());
         System.out.println("Price : " + bill.getOutrageousPrice() + " $");
     }
 
-    private String myChoice(){
+    private static String myChoice(){
         Scanner clavier = new Scanner(System.in);
         System.out.println("Entrer l'ISBN de votre choix :");
         String myISBN = clavier.nextLine();

@@ -2,6 +2,7 @@ import contracts.Bill;
 import contracts.IClientBox;
 import contracts.IVODService;
 import contracts.movies.MovieDesc;
+import contracts.movies.MovieDescExtended;
 import lombok.Getter;
 
 import java.rmi.RemoteException;
@@ -23,7 +24,10 @@ public class VODService extends UnicastRemoteObject implements IVODService {
     }
 
     private void initialize(){
-        this.catalog.add(new MovieDesc("Chucky", "1234", "Une poupée tueuse"));
+        MovieDesc film1 = new MovieDesc("Chucky", "1234", "Une poupée tueuse");
+        MovieDescExtended film2 = new MovieDescExtended("Chucky 2", "5678", "Une poupée tueuse 2");
+        this.catalog.add(film1);
+        this.catalog.add(film2);
     }
 
     @Override

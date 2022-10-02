@@ -8,7 +8,6 @@ public class Server {
     public static final int PORT_RMIREGISTERY = 2001;
     public static final int PORT_VODSERVICE = 10001;
 
-
     public static void main(String[] args) {
         try {
             IVODService obj = new VODService(PORT_VODSERVICE);
@@ -22,6 +21,5 @@ public class Server {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-
     }
 }
