@@ -9,5 +9,6 @@
     <modules>
         <module>Client</module>
         <module>Server</module>
+        <module>serveurHTML</module>
     </modules>
 </project>
