@@ -40,13 +40,16 @@ public class Client {
                 isbn = this.myChoice();
 
                 // Play the movie
-                try {
-                    // get bill
-                    bill = vodService.playmovie(isbn, clientBox);
-                    valid = true;
-                } catch (RemoteException e) {
-                    System.out.println(e.detail);
-                    System.out.println("Recommencer ...\n\n");
+                while(bill == null) {
+                    try {
+                        // get bill
+                        bill = vodService.playmovie(isbn, clientBox);
+                        valid = true;
+                    } catch (RemoteException e) {
+                        System.out.println(e.detail);
+                        System.out.println("Recommencer ...\n\n");
+                        break;
+                    }
                 }
             }
 
