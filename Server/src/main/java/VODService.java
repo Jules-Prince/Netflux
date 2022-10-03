@@ -5,6 +5,7 @@ import contracts.movies.MovieDesc;
 import lombok.Getter;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -44,10 +45,26 @@ public class VODService extends UnicastRemoteObject implements IVODService{
     @Override
     public Bill playmovie(String isbn, IClientBox clientBox) throws RemoteException {
         MovieDesc movieRequested = this.searchMovieByIbsn(isbn);
+        char finish = '*';
+        boolean end = false;
+        int cpt = 0;
 
         if(movieRequested != null){
             System.out.println("Le client demande à voir le film" + movieRequested.getMovieName());
-            clientBox.stream(new byte[]{0,1,2});
+
+            while(!end) {
+                try {
+                    Thread.sleep(400);
+                    clientBox.stream(new byte[]{(byte) movieRequested.getSynopsis().charAt(cpt)});
+                    cpt ++;
+                    if(cpt == movieRequested.getSynopsis().length()) {
+                        clientBox.stream(new byte[]{(byte) finish});
+                        end = true;
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             return new Bill(movieRequested.getMovieName(), new BigInteger("9"));
         }
 
