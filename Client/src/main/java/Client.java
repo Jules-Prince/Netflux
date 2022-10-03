@@ -29,22 +29,7 @@ public class Client {
 
         try {
             // Connection to Netflux
-            IVODService vodService;
-            IConnection connection = (IConnection) reg.lookup("Netflux");
-            System.out.println("Entrez vos identifiant (mail pwd):");
-            String logs = CLAVIER.nextLine();
-            String mail = logs.split(" ")[0];
-            String pwd = logs.split(" ")[1];
-            if(connection.checkIfClientCredentialsExistYet(mail, pwd)){
-                //Login est trouvé
-                vodService = connection.login(mail, pwd);
-                System.out.println("Vous etes connecté");
-            } else {
-                connection.signIn(mail, pwd);
-                System.out.println("Vous etes inscrit");
-                vodService = connection.login(mail, pwd);
-                System.out.println("Vous etes connecté");
-            }
+            IVODService vodService = this.connectToServer(reg);
 
             // Get catalog
             movieDescList = vodService.viewCatalog();
@@ -71,16 +56,50 @@ public class Client {
             // Print Bill
             this.printBill(bill);
 
-        } catch (NotBoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchObjectException e){
+        } catch (NoSuchObjectException e) {
             System.out.println("Aie aie aie, probleme avec l'objet ...");
             e.printStackTrace();
         }
     }
 
-    private void printMovieList(List<MovieDesc> movieDescList){
-        for(int i = 0; i < movieDescList.size(); i++){
+    public IVODService connectToServer(Registry reg) {
+        try {
+            IConnection connection = (IConnection) reg.lookup("Connection");
+
+            System.out.println("Entrez vos identifiant (mail pwd):");
+            String logs = CLAVIER.nextLine();
+            String mail = logs.split(" ")[0];
+            String pwd = logs.split(" ")[1];
+            if (connection.checkIfClientCredentialsExistYet(mail, pwd)) {
+                System.out.println("Bienvenue "+ mail +" sur Netflux la plateforme de VOD n°1 ");
+                return connection.login(mail, pwd);
+            } else {
+                System.out.println("Nouveau sur la plateforme ? Souhaitez vous inscrire (0 non; 1 oui)?");
+                String answer = CLAVIER.nextLine();
+                if (answer.equals("0") || answer.equals("non")) {
+                    return this.connectToServer(reg);
+                } else if (answer.equals("1") || answer.equals("oui")) {
+                    System.out.println("Vous venez de vous inscrire avec l'identifiant : " + mail);
+                    if (!connection.signIn(mail, pwd))
+                        throw new RuntimeException("Erreur avec le fichier de log");
+                    System.out.println("Bienvenue "+ mail +" sur Netflux la plateforme de VOD n°1 ");
+                    return connection.login(mail, pwd);
+                } else {
+                    return this.connectToServer(reg);
+                }
+            }
+        } catch (RemoteException e) {
+            System.out.println(e.detail);
+            System.out.println("Recommencer ...\n\n");
+        } catch (NotBoundException e) {
+            System.out.println("Aie aie aie, probleme avec l'objet ...");
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    private void printMovieList(List<MovieDesc> movieDescList) {
+        for (int i = 0; i < movieDescList.size(); i++) {
             System.out.println(movieDescList.get(i));
         }
     }
@@ -92,7 +111,7 @@ public class Client {
         System.out.println("Price : " + bill.getOutrageousPrice() + " $");
     }
 
-    private String myChoice(){
+    private String myChoice() {
         System.out.println("Entrer l'ISBN de votre choix :");
         String myISBN = CLAVIER.nextLine();
         return myISBN;
