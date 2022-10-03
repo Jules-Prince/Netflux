@@ -17,7 +17,8 @@ public class Server {
 
             // Bind the remote object's stub in the registry
             Registry registry = LocateRegistry.getRegistry(PORT_RMIREGISTERY);
-            registry.rebind("Netflux", obj);
+            registry.rebind("Connection", obj);
+
 
             System.out.println("Netflux has been launched correctly");
 
