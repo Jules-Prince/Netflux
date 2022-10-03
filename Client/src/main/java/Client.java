@@ -59,6 +59,7 @@ public class Client {
                 // Play the movie
                 try {
                     // get bill
+                    System.out.println("Le film : ");
                     bill = vodService.playmovie(isbn, clientBox);
                     valid = true;
                 } catch (RemoteException e) {
@@ -85,7 +86,7 @@ public class Client {
     }
 
     private void printBill(Bill bill){
-        System.out.println("====================");
+        System.out.println("\n\n\n====================");
         System.out.println("Your bill :");
         System.out.println("For " + bill.getMovieName());
         System.out.println("Price : " + bill.getOutrageousPrice() + " $");

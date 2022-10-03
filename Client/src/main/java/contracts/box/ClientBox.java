@@ -12,6 +12,6 @@ public class ClientBox extends UnicastRemoteObject implements IClientBox {
 
     @Override
     public void stream(byte[] chunk) throws RemoteException{
-        System.out.println("Le film : " + chunk);
+        System.out.print(chunk + " ");
     }
 }
