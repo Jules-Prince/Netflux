@@ -36,6 +36,8 @@ public class Connection extends UnicastRemoteObject implements IConnection {
             Scanner scanner = new Scanner(file);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
+                if(line.equals("") || line.equals(" ") || line.equals("\n"))
+                    continue;
                 String mail = line.split(" ")[0];
                 String pwd = line.split(" ")[1];
                 this.getClientList().put(mail, pwd);
@@ -53,7 +55,7 @@ public class Connection extends UnicastRemoteObject implements IConnection {
         try {
             Files.writeString(
                     Path.of(Connection.PATH_OF_USERS_LOGS),
-                    "\n" + mail + " " + pwd + System.lineSeparator(),
+                     System.lineSeparator() + mail + " " + pwd ,
                     CREATE, APPEND
             );
         } catch (IOException e) {

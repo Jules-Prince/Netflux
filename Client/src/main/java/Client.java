@@ -70,20 +70,16 @@ public class Client {
             String mail = logs.split(" ")[0];
             String pwd = logs.split(" ")[1];
             if (connection.checkIfClientCredentialsExistYet(mail, pwd)) {
-                System.out.println("Bienvenue "+ mail +" sur Netflux la plateforme de VOD n°1 ");
-                return connection.login(mail, pwd);
+                return this.knowUser(connection, mail, pwd);
             } else {
                 System.out.println("Nouveau sur la plateforme ? Souhaitez vous inscrire (0 non; 1 oui)?");
                 String answer = CLAVIER.nextLine();
                 if (answer.equals("0") || answer.equals("non")) {
                     return this.connectToServer(reg);
                 } else if (answer.equals("1") || answer.equals("oui")) {
-                    System.out.println("Vous venez de vous inscrire avec l'identifiant : " + mail);
-                    if (!connection.signIn(mail, pwd))
-                        throw new RuntimeException("Erreur avec le fichier de log");
-                    System.out.println("Bienvenue "+ mail +" sur Netflux la plateforme de VOD n°1 ");
-                    return connection.login(mail, pwd);
+                    return this.unknowUser(connection, mail, pwd);
                 } else {
+                    System.out.println("Réponse non comprise retour à la page d'accueil");
                     return this.connectToServer(reg);
                 }
             }
@@ -98,9 +94,22 @@ public class Client {
         return null;
     }
 
+    public IVODService knowUser(IConnection connection, String mail, String pwd) throws RemoteException {
+        System.out.println("Bienvenue "+ mail +" sur Netflux la plateforme de VOD n°1 ");
+        return connection.login(mail, pwd);
+    }
+
+    public IVODService unknowUser(IConnection connection, String mail, String pwd) throws RemoteException{
+        System.out.println("Vous venez de vous inscrire avec l'identifiant : " + mail);
+        if (!connection.signIn(mail, pwd))
+            throw new RuntimeException("Erreur avec le fichier de log");
+        System.out.println("Bienvenue "+ mail +" sur Netflux la plateforme de VOD n°1 ");
+        return connection.login(mail, pwd);
+    }
+
     private void printMovieList(List<MovieDesc> movieDescList) {
-        for (int i = 0; i < movieDescList.size(); i++) {
-            System.out.println(movieDescList.get(i));
+        for (MovieDesc movieDesc : movieDescList) {
+            System.out.println(movieDesc);
         }
     }
 
@@ -113,7 +122,6 @@ public class Client {
 
     private String myChoice() {
         System.out.println("Entrer l'ISBN de votre choix :");
-        String myISBN = CLAVIER.nextLine();
-        return myISBN;
+        return CLAVIER.nextLine();
     }
 }
