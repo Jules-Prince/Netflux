@@ -4,6 +4,7 @@ import contracts.IVODService;
 import contracts.movies.MovieDesc;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.math.BigInteger;
 
 @Getter
-public class VODService extends UnicastRemoteObject implements IVODService {
+public class VODService extends UnicastRemoteObject implements IVODService, Serializable {
 
     private List<MovieDesc> catalog;
     public VODService(int port) throws RemoteException {

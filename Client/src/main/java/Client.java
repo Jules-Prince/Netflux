@@ -1,5 +1,6 @@
 import contracts.Bill;
 import contracts.IClientBox;
+import contracts.IConnection;
 import contracts.IVODService;
 import contracts.box.ClientBox;
 import contracts.movies.MovieDesc;
@@ -15,6 +16,7 @@ import java.util.Scanner;
 
 public class Client {
     public static final int PORT_CLIENTBOX = 10006;
+    public static final Scanner CLAVIER = new Scanner(System.in);
     private List<MovieDesc> movieDescList;
     private IClientBox clientBox;
 
@@ -27,7 +29,22 @@ public class Client {
 
         try {
             // Connection to Netflux
-            IVODService vodService = (IVODService) reg.lookup("Netflux");
+            IVODService vodService;
+            IConnection connection = (IConnection) reg.lookup("Netflux");
+            System.out.println("Entrez vos identifiant (mail pwd):");
+            String logs = CLAVIER.nextLine();
+            String mail = logs.split(" ")[0];
+            String pwd = logs.split(" ")[1];
+            if(connection.checkIfClientCredentialsExistYet(mail, pwd)){
+                //Login est trouvé
+                vodService = connection.login(mail, pwd);
+                System.out.println("Vous etes connecté");
+            } else {
+                connection.signIn(mail, pwd);
+                System.out.println("Vous etes inscrit");
+                vodService = connection.login(mail, pwd);
+                System.out.println("Vous etes connecté");
+            }
 
             // Get catalog
             movieDescList = vodService.viewCatalog();
@@ -75,9 +92,8 @@ public class Client {
     }
 
     private String myChoice(){
-        Scanner clavier = new Scanner(System.in);
         System.out.println("Entrer l'ISBN de votre choix :");
-        String myISBN = clavier.nextLine();
+        String myISBN = CLAVIER.nextLine();
         return myISBN;
     }
 }
