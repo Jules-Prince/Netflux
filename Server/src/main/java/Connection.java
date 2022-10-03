@@ -34,7 +34,7 @@ public class Connection extends UnicastRemoteObject implements IConnection {
 
     @Override
     public IVODService login(String mail, String pwd) {
-        if (this.checkIfClientCredentialsExistYet(mail, pwd)) {
+        if (!this.checkIfClientCredentialsExistYet(mail, pwd)) {
             return null;
         } else {
             try {

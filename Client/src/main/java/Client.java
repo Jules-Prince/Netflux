@@ -53,7 +53,7 @@ public class Client {
                 // Print catalog
                 this.printMovieList(movieDescList);
 
-                // Client choice for the movie
+                // Client choice for the movie Serializable
                 isbn = this.myChoice();
 
                 // Play the movie
