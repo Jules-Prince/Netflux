@@ -12,7 +12,7 @@ import java.util.List;
 import java.math.BigInteger;
 
 @Getter
-public class VODService extends UnicastRemoteObject implements IVODService, Serializable {
+public class VODService extends UnicastRemoteObject implements IVODService{
 
     private List<MovieDesc> catalog;
     public VODService(int port) throws RemoteException {
