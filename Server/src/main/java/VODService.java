@@ -26,6 +26,13 @@ public class VODService extends UnicastRemoteObject implements IVODService{
 
     private void initialize(){
         this.catalog.add(new MovieDesc("Chucky", "1234", "Une poupée tueuse"));
+        this.catalog.add(new MovieDesc("Chucky2", "4567", "Une poupée tueuse 2"));
+        this.catalog.add(new MovieDesc("Star Wars", "5282", "Sabre laser, Dark Vador, je suis ton pere"));
+        this.catalog.add(new MovieDesc("Seigneur des anneaux", "6548", "Des elfes, des nains, des hommes, des orks..."));
+        this.catalog.add(new MovieDesc("Evil Dead 2", "6666", "Le film d'horreur culte"));
+        this.catalog.add(new MovieDesc("La ligne verte", "8795", "De l'émotion, avec une fin discutable"));
+        this.catalog.add(new MovieDesc("Lucky Luck", "9875", "Une poupée tueuse"));
+        this.catalog.add(new MovieDesc("Casper", "1234", "Un fantom, un classique "));
     }
 
     @Override
