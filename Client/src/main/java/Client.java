@@ -128,25 +128,20 @@ public class Client {
 
     /**
      * Method that asks the client if he wants to see a movie again
-     * @return
+     * @return true if the client keep watching films false if not
      */
     private static boolean isContinue(){
-        boolean end = false;
-
-        while(!end) {
-            System.out.println("\n\n Revoir un film? (0 non; 1 oui)?");
+        while(true) {
+            System.out.println("\n\nRevoir un film? (0 non; 1 oui)?");
             String logs = CLAVIER.nextLine();
-            if(logs.compareTo("1") == 0){
-                end = true;
+            if(logs.equals("1") || logs.equals("oui")){
                 return true;
-            }else if(logs.compareTo("0") == 0) {
-                end = true;
+            }else if(logs.equals("0") || logs.equals("non")) {
                 return false;
             }else{
                 System.out.println("Mauvais choix de reponse, recommencer svp.");
             }
         }
-        return end;
     }
 
     /**

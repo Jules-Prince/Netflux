@@ -21,7 +21,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 @Setter
 public class Connection extends UnicastRemoteObject implements IConnection {
     private Map<String, String> clientList;
-    private static final String PATH_OF_USERS_LOGS = new File("/src/main/resources/logsNetflux.txt").getAbsolutePath();
+    private String pathOfUsersLogs ; //+ "/Server/src/main/resources/logsNetflux.txt";
 
     /**
      * Constructor
@@ -36,11 +36,26 @@ public class Connection extends UnicastRemoteObject implements IConnection {
     }
 
     /**
+     * Set path of the users file
+     * The reason is that if you launch the project from Netflux
+     * the path will be different if you launch it from Server
+     */
+    public void setPathOfUserslogs(){
+        this.pathOfUsersLogs = System.getProperty("user.dir");
+        if(this.pathOfUsersLogs.contains("Server")){
+            this.pathOfUsersLogs = this.pathOfUsersLogs.replace("/Server", "/");
+        }
+        this.pathOfUsersLogs += "Server/src/main/resources/logsNetflux.txt";
+    }
+
+    /**
      * Recover all clients from the backup file
      */
     private void initialize() {
+        this.setPathOfUserslogs();
+
         try {
-            File file = new File(Connection.PATH_OF_USERS_LOGS);
+            File file = new File(this.getPathOfUsersLogs());
             Scanner scanner = new Scanner(file);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
