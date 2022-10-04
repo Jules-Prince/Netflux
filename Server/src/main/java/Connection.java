@@ -21,15 +21,23 @@ import static java.nio.file.StandardOpenOption.CREATE;
 @Setter
 public class Connection extends UnicastRemoteObject implements IConnection {
     private Map<String, String> clientList;
-    private static final String PATH_OF_USERS_LOGS = new File("src/main/resources/logsNetflux.txt").getAbsolutePath();
+    private static final String PATH_OF_USERS_LOGS = new File("/src/main/resources/logsNetflux.txt").getAbsolutePath();
 
+    /**
+     * Constructor
+     * @param port
+     * @throws RemoteException
+     */
     public Connection(int port) throws RemoteException {
         super(port);
         this.clientList = new HashMap<>();
 
-        this.initialize();
+        this.initialize(); // Recover all clients from the backup file
     }
 
+    /**
+     * Recover all clients from the backup file
+     */
     private void initialize() {
         try {
             File file = new File(Connection.PATH_OF_USERS_LOGS);
@@ -45,10 +53,21 @@ public class Connection extends UnicastRemoteObject implements IConnection {
         }
     }
 
+    /**
+     * Look in the backup file of the customer accounts, if the identifiers are already there
+     * @param mail
+     * @param pwd
+     * @return
+     */
     public boolean checkIfClientCredentialsExistYet(String mail, String pwd) {
         return (this.getClientList().containsKey(mail) && this.getClientList().containsValue(pwd));
     }
 
+    /**
+     * Writes the customer account to the backup file
+     * @param mail
+     * @param pwd
+     */
     private void saveNewUserCredentials(String mail, String pwd) {
         try {
             Files.writeString(
@@ -61,6 +80,12 @@ public class Connection extends UnicastRemoteObject implements IConnection {
         }
     }
 
+    /**
+     * Allows you to create an account
+     * @param mail
+     * @param pwd
+     * @return
+     */
     @Override
     public boolean signIn(String mail, String pwd) {
         if (this.checkIfClientCredentialsExistYet(mail, pwd)) {
@@ -72,6 +97,12 @@ public class Connection extends UnicastRemoteObject implements IConnection {
         }
     }
 
+    /**
+     * Allows you to connect to an account
+     * @param mail
+     * @param pwd
+     * @return
+     */
     @Override
     public IVODService login(String mail, String pwd) {
         if (this.checkIfClientCredentialsExistYet(mail, pwd)) {
