@@ -13,6 +13,11 @@ public class ClientBox extends UnicastRemoteObject implements IClientBox {
         this.display = 0;
     }
 
+    /**
+     * Method that displays the chunk received
+     * @param chunk
+     * @throws RemoteException
+     */
     @Override
     public void stream(byte[] chunk) throws RemoteException{
         System.out.print(chunk + " ");

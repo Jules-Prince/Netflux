@@ -22,22 +22,31 @@ public class Client {
     private static IClientBox clientBox;
     private static List<Bill> bills;
 
+    /**
+     * Main méthode
+     * @param args
+     * @throws RemoteException
+     */
     public static void main(String[] args) throws RemoteException {
+        // I get the register
         Registry reg = LocateRegistry.getRegistry(2001);
-        clientBox = new ClientBox(PORT_CLIENTBOX);
-        Bill bill = null;
-        String isbn;
-        boolean valid = false;
-        bills = new ArrayList();
 
+        // I set up a cleintBox stub
+        clientBox = new ClientBox(PORT_CLIENTBOX);
+
+        // Variables
+        Bill bill = null; // Bill
+        String isbn; // isbn chosen
+        boolean valid = false; // if the client does not enter a valid data, we loop
+        bills = new ArrayList(); // Retrieve all the customer's invoices
 
         try {
             // Connection to Netflux
-            IVODService vodService = connectToServer(reg);
+            IVODService vodService = connectToServer(reg); // Identification
             do{
                 // Get catalog
                 movieDescList = vodService.viewCatalog();
-                while (!valid) {
+                while (!valid) { // As long as the user does not enter a good ISBN
                     // Print catalog
                     printMovieList(movieDescList);
                     // Client choice for the movie Serializable
@@ -45,8 +54,8 @@ public class Client {
 
                     // Play the movie
                     try {
-                        // get bill
                         System.out.println("Le film : ");
+                        // play movie and get bill
                         bill = vodService.playmovie(isbn, clientBox);
                         valid = true;
                     } catch (RemoteException e) {
@@ -55,33 +64,25 @@ public class Client {
                     }
                 }
                 valid = false;
-                // Print Bill
-                printBill(bill);
-                bills.add(bill);
-            }while (isContinue());
-            printBills();
+
+                printBill(bill); // Print Bill
+                bills.add(bill); // Add the bill to the list
+            }while (isContinue()); // Start over if the user wants to watch another movie
+            printBills(); // Show all invoices and the sum
         } catch (NoSuchObjectException e) {
             System.out.println("Aie aie aie, probleme avec l'objet ...");
             e.printStackTrace();
         }
     }
 
-    private static void printBills() {
-        int val = 0;
-        System.out.println("\n\n=====================================\n\n");
-        System.out.println("Total de vos factures");
-
-        for( int i = 0; i < bills.size(); i++ ){
-            System.out.println("Film " + bills.get(i).getMovieName() + " for " + bills.get(i).getOutrageousPrice() + " $");
-            val = val + bills.get(i).getOutrageousPrice().intValue() ;
-        }
-
-        System.out.println("Total : " + val);
-    }
-
+    /**
+     * Method that manages the connection to the server
+     * @param reg
+     * @return
+     */
     public static IVODService connectToServer(Registry reg) {
         try {
-            IConnection connection = (IConnection) reg.lookup("Connection");
+            IConnection connection = (IConnection) reg.lookup("Connection"); // We recover the connection stub
 
             System.out.println("Entrez vos identifiant (mail pwd):");
             String logs = CLAVIER.nextLine();
@@ -115,25 +116,20 @@ public class Client {
         return null;
     }
 
-    private static void printMovieList(List<MovieDesc> movieDescList) {
-        for (int i = 0; i < movieDescList.size(); i++) {
-            System.out.println(movieDescList.get(i));
-        }
-    }
-
-    private static void printBill(Bill bill){
-        System.out.println("\n\n\n====================");
-        System.out.println("Your bill :");
-        System.out.println("For " + bill.getMovieName());
-        System.out.println("Price : " + bill.getOutrageousPrice() + " $");
-    }
-
+    /**
+     * Method that retrieves and returns the selected isbn
+     * @return
+     */
     private static String myChoice() {
         System.out.println("Entrer l'ISBN de votre choix :");
         String myISBN = CLAVIER.nextLine();
         return myISBN;
     }
 
+    /**
+     * Method that asks the client if he wants to see a movie again
+     * @return
+     */
     private static boolean isContinue(){
         boolean end = false;
 
@@ -151,5 +147,42 @@ public class Client {
             }
         }
         return end;
+    }
+
+    /**
+     * Print bill
+     * @param bill
+     */
+    private static void printBill(Bill bill){
+        System.out.println("\n\n\n====================");
+        System.out.println("Your bill :");
+        System.out.println("For " + bill.getMovieName());
+        System.out.println("Price : " + bill.getOutrageousPrice() + " $");
+    }
+
+    /**
+     * Print bills
+     */
+    private static void printBills() {
+        int val = 0;
+        System.out.println("\n\n=====================================\n\n");
+        System.out.println("Total de vos factures");
+
+        for( int i = 0; i < bills.size(); i++ ){
+            System.out.println("Film " + bills.get(i).getMovieName() + " for " + bills.get(i).getOutrageousPrice() + " $");
+            val = val + bills.get(i).getOutrageousPrice().intValue() ;
+        }
+
+        System.out.println("Total : " + val);
+    }
+
+    /**
+     * Print movie list
+     * @param movieDescList
+     */
+    private static void printMovieList(List<MovieDesc> movieDescList) {
+        for (int i = 0; i < movieDescList.size(); i++) {
+            System.out.println(movieDescList.get(i));
+        }
     }
 }
