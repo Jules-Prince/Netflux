@@ -32,7 +32,7 @@ public class VODService extends UnicastRemoteObject implements IVODService{
         this.catalog.add(new MovieDesc("Evil Dead 2", "6666", "Le film d'horreur culte"));
         this.catalog.add(new MovieDesc("La ligne verte", "8795", "De l'émotion, avec une fin discutable"));
         this.catalog.add(new MovieDesc("Lucky Luck", "9875", "Une poupée tueuse"));
-        this.catalog.add(new MovieDesc("Casper", "1234", "Un fantom, un classique "));
+        this.catalog.add(new MovieDesc("Casper", "1934", "Un fantom, un classique "));
     }
 
     @Override
@@ -59,6 +59,7 @@ public class VODService extends UnicastRemoteObject implements IVODService{
         if(movieRequested != null){
             System.out.println("Le client demande à voir le film" + movieRequested.getMovieName());
 
+            // Afin de simuler les données, on prends chaque caractere du synopsis pour le transformer un byte.
             while(!end) {
                 try {
                     Thread.sleep(400);

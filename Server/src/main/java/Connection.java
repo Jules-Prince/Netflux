@@ -21,7 +21,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 @Setter
 public class Connection extends UnicastRemoteObject implements IConnection {
     private Map<String, String> clientList;
-    private static final String PATH_OF_USERS_LOGS = System.getProperty("user.dir") + "/Server/src/main/resources/logsNetflux.txt";
+    private static final String PATH_OF_USERS_LOGS = new File("src/main/resources/logsNetflux.txt").getAbsolutePath();
 
     public Connection(int port) throws RemoteException {
         super(port);
@@ -52,7 +52,7 @@ public class Connection extends UnicastRemoteObject implements IConnection {
     private void saveNewUserCredentials(String mail, String pwd) {
         try {
             Files.writeString(
-                    Path.of(Connection.PATH_OF_USERS_LOGS),
+                    Path.of(System.getProperty("user.dir"), "logsNetflux.txt"),
                     "\n" + mail + " " + pwd + System.lineSeparator(),
                     CREATE, APPEND
             );

@@ -11,58 +11,75 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.sql.Struct;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Client {
     public static final int PORT_CLIENTBOX = 10006;
     public static final Scanner CLAVIER = new Scanner(System.in);
-    private List<MovieDesc> movieDescList;
-    private IClientBox clientBox;
+    private static List<MovieDesc> movieDescList;
+    private static IClientBox clientBox;
+    private static List<Bill> bills;
 
-    void run() throws RemoteException {
+    public static void main(String[] args) throws RemoteException {
         Registry reg = LocateRegistry.getRegistry(2001);
         clientBox = new ClientBox(PORT_CLIENTBOX);
         Bill bill = null;
         String isbn;
         boolean valid = false;
+        bills = new ArrayList();
+
 
         try {
             // Connection to Netflux
-            IVODService vodService = this.connectToServer(reg);
+            IVODService vodService = connectToServer(reg);
+            do{
+                // Get catalog
+                movieDescList = vodService.viewCatalog();
+                while (!valid) {
+                    // Print catalog
+                    printMovieList(movieDescList);
+                    // Client choice for the movie Serializable
+                    isbn = myChoice();
 
-            // Get catalog
-            movieDescList = vodService.viewCatalog();
-
-            while (!valid) {
-                // Print catalog
-                this.printMovieList(movieDescList);
-
-                // Client choice for the movie Serializable
-                isbn = this.myChoice();
-
-                // Play the movie
-                try {
-                    // get bill
-                    System.out.println("Le film : ");
-                    bill = vodService.playmovie(isbn, clientBox);
-                    valid = true;
-                } catch (RemoteException e) {
-                    System.out.println(e.detail);
-                    System.out.println("Recommencer ...\n\n");
+                    // Play the movie
+                    try {
+                        // get bill
+                        System.out.println("Le film : ");
+                        bill = vodService.playmovie(isbn, clientBox);
+                        valid = true;
+                    } catch (RemoteException e) {
+                        System.out.println(e.detail);
+                        System.out.println("Recommencer ...\n\n");
+                    }
                 }
-            }
-
-            // Print Bill
-            this.printBill(bill);
-
+                valid = false;
+                // Print Bill
+                printBill(bill);
+                bills.add(bill);
+            }while (isContinue());
+            printBills();
         } catch (NoSuchObjectException e) {
             System.out.println("Aie aie aie, probleme avec l'objet ...");
             e.printStackTrace();
         }
     }
 
-    public IVODService connectToServer(Registry reg) {
+    private static void printBills() {
+        int val = 0;
+        System.out.println("\n\n=====================================\n\n");
+        System.out.println("Total de vos factures");
+
+        for( int i = 0; i < bills.size(); i++ ){
+            System.out.println("Film " + bills.get(i).getMovieName() + " for " + bills.get(i).getOutrageousPrice() + " $");
+            val = val + bills.get(i).getOutrageousPrice().intValue() ;
+        }
+
+        System.out.println("Total : " + val);
+    }
+
+    public static IVODService connectToServer(Registry reg) {
         try {
             IConnection connection = (IConnection) reg.lookup("Connection");
 
@@ -77,7 +94,7 @@ public class Client {
                 System.out.println("Nouveau sur la plateforme ? Souhaitez vous inscrire (0 non; 1 oui)?");
                 String answer = CLAVIER.nextLine();
                 if (answer.equals("0") || answer.equals("non")) {
-                    return this.connectToServer(reg);
+                    return connectToServer(reg);
                 } else if (answer.equals("1") || answer.equals("oui")) {
                     System.out.println("Vous venez de vous inscrire avec l'identifiant : " + mail);
                     if (!connection.signIn(mail, pwd))
@@ -85,7 +102,7 @@ public class Client {
                     System.out.println("Bienvenue "+ mail +" sur Netflux la plateforme de VOD n°1 ");
                     return connection.login(mail, pwd);
                 } else {
-                    return this.connectToServer(reg);
+                    return connectToServer(reg);
                 }
             }
         } catch (RemoteException e) {
@@ -98,22 +115,41 @@ public class Client {
         return null;
     }
 
-    private void printMovieList(List<MovieDesc> movieDescList) {
+    private static void printMovieList(List<MovieDesc> movieDescList) {
         for (int i = 0; i < movieDescList.size(); i++) {
             System.out.println(movieDescList.get(i));
         }
     }
 
-    private void printBill(Bill bill){
+    private static void printBill(Bill bill){
         System.out.println("\n\n\n====================");
         System.out.println("Your bill :");
         System.out.println("For " + bill.getMovieName());
         System.out.println("Price : " + bill.getOutrageousPrice() + " $");
     }
 
-    private String myChoice() {
+    private static String myChoice() {
         System.out.println("Entrer l'ISBN de votre choix :");
         String myISBN = CLAVIER.nextLine();
         return myISBN;
+    }
+
+    private static boolean isContinue(){
+        boolean end = false;
+
+        while(!end) {
+            System.out.println("\n\n Revoir un film? (0 non; 1 oui)?");
+            String logs = CLAVIER.nextLine();
+            if(logs.compareTo("1") == 0){
+                end = true;
+                return true;
+            }else if(logs.compareTo("0") == 0) {
+                end = true;
+                return false;
+            }else{
+                System.out.println("Mauvais choix de reponse, recommencer svp.");
+            }
+        }
+        return end;
     }
 }

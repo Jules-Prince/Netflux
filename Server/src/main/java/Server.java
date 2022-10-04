@@ -1,6 +1,4 @@
 import contracts.IConnection;
-import contracts.IVODService;
-
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -8,7 +6,7 @@ import java.rmi.registry.Registry;
 public class Server {
     public static final int PORT_RMIREGISTERY = 2001;
     public static final int PORT_VODSERVICE = 10001;
-    public static final int PORT_CONNECTION = 11111;
+    public static final int PORT_CONNECTION = 10002;
 
 
     public static void main(String[] args) {
